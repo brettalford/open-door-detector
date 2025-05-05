@@ -1,0 +1,48 @@
+ #include "NewPing.h"
+
+#define TRIGGER_PIN 10
+#define ECHO_PIN 9
+#define MAX_DISTANCE 400
+#define MAX_EVENTS 50
+
+NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
+
+unsigned long openTimes[MAX_EVENTS];
+int openCount = 0;
+bool doorWasClosed = true;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  unsigned int distance = sonar.ping_cm();
+
+  if (distance > 10) {
+    if (doorWasClosed && openCount < MAX_EVENTS) {
+      openTimes[openCount] = millis();
+      openCount++;
+      Serial.println(openCount);
+      Serial.println(millis());
+    }
+    doorWasClosed = false;
+  } else {
+    doorWasClosed = true;
+  }
+
+  if (Serial.available()) {
+  char c = Serial.read();
+  if (c == 'p') { // 'p' to print
+    for (int i = 0; i < openCount; i++) {
+      Serial.print("Open #");
+      Serial.print(i + 1);
+      Serial.print(": ");
+      Serial.print(openTimes[i] / 1000); // seconds since startup
+      Serial.println("s");
+    }
+  }
+}
+
+
+  delay(500);
+}
