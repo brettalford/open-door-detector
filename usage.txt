@@ -1,0 +1,1 @@
+Detects and stores the time since operation start and the quantity of times a door has been opened. upload code to arduino unit and run use command p to retrieve data
